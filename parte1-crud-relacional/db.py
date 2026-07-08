@@ -10,7 +10,7 @@ from psycopg2.extras import RealDictCursor
 DB_CONFIG = {
     "host": os.getenv("DB_HOST", "SEU_ENDPOINT.rds.amazonaws.com"),
     "port": os.getenv("DB_PORT", "5432"),
-    "dbname": os.getenv("DB_NAME", "trabalho_ed"),
+    "dbname": os.getenv("DB_NAME", "bancoufs"),
     "user": os.getenv("DB_USER", "postgres"),
     "password": os.getenv("DB_PASSWORD", "SUA_SENHA"),
 }
