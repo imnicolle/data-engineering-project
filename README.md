@@ -1,1 +1,1 @@
-# Trabalho final da disciplina de Engenharia de Dados
+# Trabalho Prático de Engenharia de Dados
