@@ -15,10 +15,8 @@ from mongo_db import get_db
 
 db = get_db()
 
-
-# ----------------------------------------------------------------------
 # USUARIO
-# ----------------------------------------------------------------------
+
 def criar_usuario(nome, cpf, email, senha, data_nascimento):
     doc = {
         "nome": nome,
@@ -51,10 +49,8 @@ def deletar_usuario(id_usuario):
     resultado = db.usuarios.delete_one({"_id": ObjectId(id_usuario)})
     return resultado.deleted_count > 0
 
-
-# ----------------------------------------------------------------------
 # CURSO
-# ----------------------------------------------------------------------
+
 def criar_curso(codigo, nome, grau, departamento):
     doc = {"codigo": codigo, "nome": nome, "grau": grau, "departamento": departamento}
     resultado = db.cursos.insert_one(doc)
@@ -78,10 +74,8 @@ def deletar_curso(id_curso):
     resultado = db.cursos.delete_one({"_id": ObjectId(id_curso)})
     return resultado.deleted_count > 0
 
-
-# ----------------------------------------------------------------------
 # ESTUDANTE (subdocumento embutido dentro de usuarios, relação 1:1)
-# ----------------------------------------------------------------------
+
 def criar_estudante(id_usuario, matricula, data_ingresso):
     """Transforma um usuário existente em estudante, adicionando o
     subdocumento embutido com a lista de vínculos vazia."""
@@ -119,10 +113,8 @@ def deletar_estudante(id_usuario):
     )
     return resultado.modified_count > 0
 
-
-# ----------------------------------------------------------------------
 # VINCULO (item dentro da lista embutida usuarios.estudante.vinculos)
-# ----------------------------------------------------------------------
+
 def criar_vinculo(id_usuario, id_curso, status, data_inicio, tipo_ingresso, data_fim=None):
     # Garante integridade referencial: o curso precisa existir
     if not db.cursos.find_one({"_id": ObjectId(id_curso)}):
@@ -172,10 +164,8 @@ def deletar_vinculo(id_usuario, id_vinculo):
     )
     return resultado.modified_count > 0
 
-
-# ----------------------------------------------------------------------
 # DEMONSTRAÇÃO
-# ----------------------------------------------------------------------
+
 if __name__ == "__main__":
     from datetime import date
 
