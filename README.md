@@ -4,7 +4,7 @@ Repositório do trabalho prático da disciplina de Engenharia de Dados, ministra
 
 O projeto é dividido em três partes: CRUD relacional (PostgreSQL), CRUD NoSQL (MongoDB) e integração de dados em um esquema estrela (ETL com Apache Hop).
 
-## Autoras
+## Alunas
 
 - Evilyn Aquino dos Santos
 - Nicolle Rillary Santana Silva
