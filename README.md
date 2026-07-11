@@ -20,12 +20,14 @@ ed-2026/
 
 ## Modelo de dados
 
-O projeto trabalha com quatro entidades, presentes tanto na Parte 1 quanto na Parte 2:
+A estrutura das tabelas segue o esquema relacional **"universidade"** trabalhado em aula (dump fornecido pelo professor). Esse esquema tem 16 tabelas ao todo; o CRUD desenvolvido neste trabalho (Partes 1 e 2) manipula especificamente quatro delas:
 
-- **usuário** — dados pessoais e de acesso (nome, CPF, e-mail, senha, data de nascimento)
-- **estudante** — especialização de usuário (matrícula, data de ingresso)
-- **curso** — código, nome, grau e departamento
-- **vínculo** — associação entre um estudante e um curso ao longo do tempo (status, datas, tipo de ingresso)
+- **usuario** — chave: `cpf`. Dados pessoais e de acesso (nome, data de nascimento, e-mail e telefone em lista, login, senha)
+- **estudante** — chave: `mat_estudante`. Especialização de usuário (referencia `usuario` por `cpf`; campos `mc` e `ano_ingresso`)
+- **curso** — chave: `idcurso`. Definido por nome, grau (Bacharelado/Licenciatura Plena), turno, campus e nível
+- **vinculo** — chave: `idvinculo`. Associação entre um estudante e um curso ao longo do tempo (status: Ativo/Cancelada/Formando/Graduado; datas de entrada e saída)
+
+As demais 12 tabelas do esquema do professor (`professor`, `departamento`, `disciplina`, `semestre`, `turma`, `leciona`, `cursa`, `projeto`, `plano`, `sala`, `horario`, `alocacao`) fazem parte do banco relacional completo e servem de fonte de dados para a Parte 3 (ETL / esquema estrela).
 
 ---
 
@@ -36,9 +38,11 @@ CRUD completo em Python, conectado a uma instância PostgreSQL hospedada no AWS 
 ### Arquivos
 | Arquivo | Descrição |
 |---|---|
-| `schema.sql` | Script de criação das 4 tabelas e restrições de integridade |
+| `dump_completo_professor.sql` | Script original do professor: cria o esquema `universidade` completo (16 tabelas) com os dados de exemplo |
 | `db.py` | Módulo de conexão com o banco (lê credenciais do `.env`) |
-| `crud.py` | Funções de criação, leitura, atualização e remoção para cada tabela |
+| `crud.py` | Funções puras de criação, leitura, atualização e remoção para usuario/curso/estudante/vinculo (16 funções, sem interface de usuário) |
+| `exibicao.py` | Funções responsáveis apenas por formatar e imprimir os dados na tela |
+| `menu.py` | Interface de linha de comando (menu interativo) — é o programa que o usuário efetivamente executa |
 | `requirements.txt` | Dependências Python |
 
 ### Como rodar
@@ -55,11 +59,12 @@ CRUD completo em Python, conectado a uma instância PostgreSQL hospedada no AWS 
    ```bash
    pip install -r requirements.txt
    ```
-3. Execute o `schema.sql` no banco (via pgAdmin 4 ou `psql`).
-4. Rode a demonstração:
+3. Execute o `dump_completo_professor.sql` no banco (via pgAdmin 4 ou `psql`) — isso cria as 16 tabelas do esquema `universidade`, incluindo as 4 usadas pelo CRUD.
+4. Rode o programa interativo:
    ```bash
-   python crud.py
+   python menu.py
    ```
+   Isso abre um menu no terminal, onde é possível escolher a entidade (usuário/curso/estudante/vínculo) e a operação (criar/buscar/listar/atualizar/deletar), digitando os dados na hora.
 
 ---
 
@@ -68,16 +73,29 @@ CRUD completo em Python, conectado a uma instância PostgreSQL hospedada no AWS 
 CRUD completo em Python, conectado a uma instância própria do MongoDB hospedada em um servidor AWS EC2.
 
 ### Mapeamento relacional → MongoDB
-- **usuário + estudante** → coleção `usuarios`, com o estudante embutido como subdocumento (relação 1:1)
-- **vínculo** → lista embutida dentro do subdocumento `estudante` (relação 1:N)
-- **curso** → coleção própria `cursos`, referenciada pelo `ObjectId` dentro de cada vínculo (relação N:1)
+
+O mapeamento cobre **todas as 16 tabelas** do esquema do professor, representadas em 7 coleções:
+
+| Tabela(s) relacional(is) | Representação no MongoDB |
+|---|---|
+| `usuario` | Coleção `usuarios` (chave natural: `cpf`) |
+| `estudante`, `professor` | Subdocumentos embutidos em `usuarios` (relação 1:1) |
+| `vinculo`, `cursa`, `plano` | Listas embutidas dentro de `usuarios.estudante` (relação 1:N) |
+| `curso` | Coleção própria `cursos` |
+| `departamento` | Coleção própria `departamentos` |
+| `disciplina` | Coleção própria `disciplinas` |
+| `semestre` | Coleção própria `semestres` |
+| `projeto` | Coleção própria `projetos` |
+| `turma`, `leciona`, `sala`, `horario`, `alocacao` | Coleção `turmas`, com `professores` e `alocacoes` embutidos |
+
+O **CRUD em código** (`crud_mongo.py`) manipula apenas as quatro entidades pedidas no enunciado (usuário, estudante, curso, vínculo) — as demais coleções existem só para fins de representação/mapeamento, sem operações de CRUD associadas.
 
 ### Arquivos
 | Arquivo | Descrição |
 |---|---|
-| `mongo_schema.js` | Script de criação das coleções, validação de esquema (`$jsonSchema`) e índices |
+| `mongo_schema.js` | Script de criação de todas as 7 coleções, com validação de esquema (`$jsonSchema`) e índices |
 | `mongo_db.py` | Módulo de conexão com o banco (lê credenciais do `.env`) |
-| `crud_mongo.py` | Funções de criação, leitura, atualização e remoção para cada entidade |
+| `crud_mongo.py` | Funções de criação, leitura, atualização e remoção para usuário/estudante/curso/vínculo |
 | `requirements_mongo.txt` | Dependências Python |
 | `.env.example` | Modelo das variáveis de ambiente (sem dados reais) |
 
@@ -85,15 +103,15 @@ CRUD completo em Python, conectado a uma instância própria do MongoDB hospedad
 
 1. Crie um arquivo `.env` dentro de `parte2-crud-nosql/` com:
    ```
-   MONGO_URI=mongodb://usuario:senha@seu-host:27017/?authSource=admin
+   MONGO_URI=mongodb://usuario:senha@endereco-da-sua-ec2:27017/?authSource=admin
    MONGO_DB_NAME=bancoufs_nosql
    ```
 2. Instale as dependências:
    ```bash
    pip install -r requirements_mongo.txt
    ```
-3. Execute o `mongo_schema.js` no MongoDB (via `mongosh` ou pelo shell do MongoDB Compass).
-4. Rode a demonstração:
+3. Execute o `mongo_schema.js` no MongoDB (via `mongosh` ou pelo shell do MongoDB Compass) — recomenda-se colar em blocos pequenos (um `db.createCollection(...)` por vez).
+4. Rode o script de teste:
    ```bash
    python crud_mongo.py
    ```
@@ -102,7 +120,7 @@ CRUD completo em Python, conectado a uma instância própria do MongoDB hospedad
 
 ## Parte 3 — Integração de Dados (em andamento)
 
-Construção de um esquema estrela e pipelines de ETL com Apache Hop, integrando os dados do banco relacional (Parte 1) com arquivos CSV do portal [dados.ufs.br](https://dados.ufs.br/group/ensino).
+Construção de um esquema estrela e pipelines de ETL com Apache Hop, integrando os dados do banco relacional (Parte 1, esquema `universidade` completo) com arquivos CSV do portal [dados.ufs.br](https://dados.ufs.br/group/ensino).
 
 *Seção a ser adicionada após a conclusão desta etapa.*
 
