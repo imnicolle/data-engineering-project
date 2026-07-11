@@ -2,9 +2,9 @@
 CRUD (Create, Read, Update, Delete) para as tabelas do esquema "universidade":
 usuario, estudante, curso, vinculo
 
-Estrutura das tabelas e dados de exemplo baseados no dump fornecido pelo
-professor em aula.
-Uso: python crud.py   (executa uma demonstração no final do arquivo)
+Estrutura das tabelas baseada no dump fornecido pelo professor em aula.
+Este módulo contém apenas as funções de manipulação de dados -- para
+interagir com elas via terminal, use o menu.py.
 """
 from db import get_connection
 
