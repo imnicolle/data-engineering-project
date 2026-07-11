@@ -205,57 +205,10 @@ def deletar_vinculo(id_vinculo):
             conn.commit()
             return cur.rowcount > 0
 
-# DEMONSTRAÇÃO
-# Dados de exemplo inspirados no dump do professor: nomes de cientistas
-# da computação famosos, e os mesmos cursos que aparecem no dump.
 
-if __name__ == "__main__":
-    # 1. Cria vários usuários/estudantes
-    pessoas = [
-        # cpf,           nome,                data_nascimento, email,                          login,        senha,  mat_estudante, mc,  ano_ingresso
-        ("22222222301", "Steve Jobs",          "1990-03-05", ["steve@email.com"],              "steve2",     "s1",   "E201", 7.0, 2021),
-        ("22222222302", "Alan Turing",         "1912-07-23", ["turing@email.com"],             "alan2",      "s2",   "E202", 9.5, 2021),
-        ("22222222303", "Ada Lovelace",        "1985-11-27", ["ada@email.com"],                "ada2",       "s3",   "E203", 8.7, 2022),
-        ("22222222304", "Grace Hopper",        "1996-12-10", ["grace@email.com"],              "grace2",     "s4",   "E204", 7.7, 2022),
-        ("22222222305", "Donald Knuth",        "1938-01-10", ["knuth@email.com"],              "knuth2",     "s5",   "E205", 6.9, 2023),
-    ]
-
-    ids_estudantes = []
-    for cpf, nome, nascimento, email, login, senha, mat, mc, ano in pessoas:
-        criar_usuario(cpf, nome, nascimento, email=email, login=login, senha=senha)
-        criar_estudante(mat, cpf, mc=mc, ano_ingresso=ano)
-        ids_estudantes.append(mat)
-
-    print("Usuários/estudantes criados:")
-    for usuario in buscar_usuario():
-        print(" ", usuario)
-
-    # 2. Cria os mesmos cursos que aparecem no dump do professor
-    cursos = [
-        ("Ciência da Computação", "Bacharelado", "Vespertino", "São Cristóvão", "Graduação"),
-        ("Sistemas de Informação", "Bacharelado", "Noturno", "São Cristóvão", "Graduação"),
-        ("Engenharia de Computação", "Bacharelado", "Vespertino", "São Cristóvão", "Graduação"),
-    ]
-    ids_cursos = [criar_curso(*c) for c in cursos]
-
-    print("\nCursos criados:")
-    for curso in buscar_curso():
-        print(" ", curso)
-
-    # 3. Cria um vínculo para cada estudante, em cursos diferentes
-    ids_vinculos = []
-    for i, mat in enumerate(ids_estudantes):
-        id_curso = ids_cursos[i % len(ids_cursos)]
-        id_v = criar_vinculo(mat, id_curso, status="Ativo", data_entrada="2024-03-01")
-        ids_vinculos.append(id_v)
-
-    print("\nVínculos criados:")
-    for vinculo in buscar_vinculo():
-        print(" ", vinculo)
-
-    # 4. Atualiza o vínculo do primeiro estudante (Steve Jobs) para "Formando"
-    atualizar_vinculo(ids_vinculos[0], status="Formando")
-    print("\nVínculo atualizado:", buscar_vinculo(ids_vinculos[0]))
-
-    # 5. Deleta o último vínculo criado (Donald Knuth) -- descomente para testar
-    # deletar_vinculo(ids_vinculos[-1])
+# ----------------------------------------------------------------------
+# Este módulo contém apenas as operações de manipulação de dados (CRUD).
+# Ele não imprime nada na tela nem contém dados fixos de exemplo --
+# quem cuida da interação com o usuário é o menu.py, e quem cuida da
+# formatação/exibição dos resultados é o exibicao.py.
+# ----------------------------------------------------------------------
