@@ -12,7 +12,7 @@ O projeto é dividido em três partes: CRUD relacional (PostgreSQL), CRUD NoSQL 
 ## Estrutura do repositório
 
 ```
-ed-2026/
+data-engineering-project/
 ├── parte1-crud-relacional/    # CRUD em PostgreSQL (AWS RDS)
 ├── parte2-crud-nosql/         # CRUD em MongoDB (AWS EC2)
 └── README.md
