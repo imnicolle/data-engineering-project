@@ -152,4 +152,4 @@ O esquema estrela modela turmas de graduação, associando professor, disciplina
 
 ## Segurança
 
-Nenhum arquivo `.env` (contendo credenciais reais) é versionado neste repositório — cada pasta possui um `.gitignore` que impede seu envio. Utilize os arquivos `.env.example` como referência para criar sua própria cópia local.
+Nenhum arquivo `.env` (contendo credenciais reais) é versionado neste repositório — cada pasta possui um `.gitignore` que impede seu envio. Deve-se utilizar os arquivos `.env.example` como referência para criar sua própria cópia local.
