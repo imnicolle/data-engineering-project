@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Data Engineering Coursework Project
 
 Repository for the practical coursework of the Data Engineering course, taught by professor André Britto de Carvalho (UFS).
@@ -153,3 +154,6 @@ The star schema models undergraduate class sections, linking professor, course s
 ## Security
 
 No `.env` file (containing real credentials) is tracked in this repository — each folder has a `.gitignore` that prevents it from being committed. Use the `.env.example` files as a reference to create your own local copy.
+=======
+
+>>>>>>> f78693f42e71d11b6e09e82cd71733df71dc3abf
