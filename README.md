@@ -15,6 +15,7 @@ O projeto é dividido em três partes: CRUD relacional (PostgreSQL), CRUD NoSQL 
 data-engineering-project/
 ├── parte1-crud-relacional/    # CRUD em PostgreSQL (AWS RDS)
 ├── parte2-crud-nosql/         # CRUD em MongoDB (AWS EC2)
+├── parte3-integracao-de-dados/ # Esquema estrela + ETL (Apache Hop)
 └── README.md
 ```
 
@@ -120,9 +121,32 @@ O **CRUD em código** (`crud_mongo.py`) manipula apenas as quatro entidades pedi
 
 ## Parte 3 — Integração de Dados (em andamento)
 
-Construção de um esquema estrela e pipelines de ETL com Apache Hop, integrando os dados do banco relacional (Parte 1, esquema `universidade` completo) com arquivos CSV do portal [dados.ufs.br](https://dados.ufs.br/group/ensino).
+Construção de um esquema estrela e pipelines de ETL com Apache Hop, integrando os dados do banco relacional (Parte 1) com arquivos CSV do portal [dados.ufs.br](https://dados.ufs.br/group/ensino).
 
-*Seção a ser adicionada após a conclusão desta etapa.*
+O esquema estrela modela turmas de graduação, associando professor, disciplina, departamento, semestre e campus, com as métricas de matriculados, média de notas, aprovados e reprovados.
+
+### Arquivos
+| Arquivo | Descrição |
+|---|---|
+| `dw_schema.sql` | Script de criação das tabelas de dimensão e da tabela de fatos |
+| `carga_dim_departamento.hpl` | Pipeline de carga da dimensão Departamento |
+| `carga_dim_professor.hpl` | Pipeline de carga da dimensão Professor |
+| `carga_dim_disciplina.hpl` | Pipeline de carga da dimensão Disciplina |
+| `carga_dim_semestre.hpl` | Pipeline de carga da dimensão Semestre |
+| `carga_dim_campus.hpl` | Pipeline de carga da dimensão Campus |
+| `carga_fato_turma.hpl` | Pipeline de carga da tabela de fatos Turma |
+| `uni-csv-unidades-academicas-da-ufs.csv`, `doc-csv-docentes-da-ufs.csv`, `com-csv-componentes-curriculares-da-ufs.csv`, `tur-csv-turmas-de-2025.csv` | Fontes de dados do portal dados.ufs.br |
+
+### Fontes de dados
+- **Relacional (Parte 1):** todas as linhas originais do dump, mais as linhas inseridas via CRUD.
+- **CSV (dados.ufs.br):** Unidades Acadêmicas, Componentes Curriculares, Docentes e Turmas (2019–2025).
+
+### Como rodar
+
+1. Crie um banco de dados dedicado no mesmo servidor RDS da Parte 1 (separado do banco relacional) e execute `dw_schema.sql`.
+2. No Apache Hop, crie uma conexão de banco chamada `dw_ufs` apontando para esse banco.
+3. Abra os pipelines dentro de um projeto Hop cuja raiz seja a pasta `parte3-integracao-de-dados/` — os CSVs de entrada são referenciados por caminho relativo (`${Internal.Entry.Current.Directory}`).
+4. Execute primeiro os pipelines de dimensão (`carga_dim_*.hpl`) e, por último, `carga_fato_turma.hpl`.
 
 ---
 
